@@ -1,0 +1,202 @@
+[
+  {
+    "id": "usr-001",
+    "curp": "RATA980725MGTMRN07",
+    "nss": "12345678901",
+    "nombre": "Ana Sofia Ramirez Torres",
+    "edad": 27,
+    "sexo": "Femenino",
+    "tipo_sangre": "O+",
+    "alergias": ["Penicilina", "Polen estacional"],
+    "ultima_consulta": "12/04/2026",
+    "antecedentes": {
+      "padecimientos_cronicos": ["Asma leve controlada"],
+      "cirugias": ["Apendicectomia (2016)"],
+      "historial_familiar": ["Hipertension (madre)", "Diabetes tipo 2 (abuelo materno)"]
+    },
+    "historial_medico": [
+      {
+        "fecha": "12/04/2026",
+        "medico": "Dra. Laura Medina",
+        "especialidad": "Medicina Familiar",
+        "diagnostico": "Control de asma estacional",
+        "notas": "Se ajusta inhalador de rescate y se sugiere evitar cambios bruscos de temperatura."
+      },
+      {
+        "fecha": "20/01/2026",
+        "medico": "Dr. Marco Hernandez",
+        "especialidad": "Medicina General",
+        "diagnostico": "Infeccion de vias respiratorias altas",
+        "notas": "Manejo sintomatico y seguimiento por persistencia de sintomas."
+      }
+    ],
+    "resultados_laboratorio": [
+      {
+        "nombre_estudio": "Glucosa en ayuno",
+        "fecha": "10/04/2026",
+        "resultado": 91,
+        "unidad": "mg/dL",
+        "rango_normal": "70 - 99 mg/dL",
+        "estado": "Normal"
+      },
+      {
+        "nombre_estudio": "Colesterol total",
+        "fecha": "10/04/2026",
+        "resultado": 178,
+        "unidad": "mg/dL",
+        "rango_normal": "< 200 mg/dL",
+        "estado": "Normal"
+      }
+    ]
+  },
+  {
+    "id": "usr-002",
+    "curp": "HEGM710312HGTNRS05",
+    "nss": "12345678902",
+    "nombre": "Guillermo Hernandez Morales",
+    "edad": 55,
+    "sexo": "Masculino",
+    "tipo_sangre": "A+",
+    "alergias": ["Ninguna reportada"],
+    "ultima_consulta": "03/04/2026",
+    "antecedentes": {
+      "padecimientos_cronicos": ["Diabetes tipo 2", "Hipertension arterial"],
+      "cirugias": ["Colecistectomia (2012)"],
+      "historial_familiar": ["Infarto agudo al miocardio (padre)"]
+    },
+    "historial_medico": [
+      {
+        "fecha": "03/04/2026",
+        "medico": "Dra. Ingrid Navarro",
+        "especialidad": "Endocrinologia",
+        "diagnostico": "Control de diabetes con desajuste dietetico",
+        "notas": "Se refuerza plan de alimentacion y actividad fisica."
+      },
+      {
+        "fecha": "18/02/2026",
+        "medico": "Dr. Eduardo Cervantes",
+        "especialidad": "Cardiologia",
+        "diagnostico": "Hipertension controlada",
+        "notas": "Continuar monitoreo domiciliario de presion arterial."
+      }
+    ],
+    "resultados_laboratorio": [
+      {
+        "nombre_estudio": "Hemoglobina glucosilada (HbA1c)",
+        "fecha": "01/04/2026",
+        "resultado": 7.4,
+        "unidad": "%",
+        "rango_normal": "4.0 - 5.6 %",
+        "estado": "Elevado"
+      },
+      {
+        "nombre_estudio": "Glucosa en ayuno",
+        "fecha": "01/04/2026",
+        "resultado": 132,
+        "unidad": "mg/dL",
+        "rango_normal": "70 - 99 mg/dL",
+        "estado": "Elevado"
+      }
+    ]
+  },
+  {
+    "id": "usr-003",
+    "curp": "SAGL041129MGTLRN03",
+    "nss": "12345678903",
+    "nombre": "Lucia Salazar Garcia",
+    "edad": 21,
+    "sexo": "Femenino",
+    "tipo_sangre": "B+",
+    "alergias": ["Lactosa"],
+    "ultima_consulta": "15/03/2026",
+    "antecedentes": {
+      "padecimientos_cronicos": ["Anemia ferropenica"],
+      "cirugias": ["Ninguna"],
+      "historial_familiar": ["Hipotiroidismo (madre)"]
+    },
+    "historial_medico": [
+      {
+        "fecha": "15/03/2026",
+        "medico": "Dra. Patricia Orozco",
+        "especialidad": "Medicina Interna",
+        "diagnostico": "Seguimiento de anemia",
+        "notas": "Mantener suplementacion de hierro por 8 semanas."
+      },
+      {
+        "fecha": "11/11/2025",
+        "medico": "Dr. Luis Reynoso",
+        "especialidad": "Medicina General",
+        "diagnostico": "Gastroenteritis aguda resuelta",
+        "notas": "Sin complicaciones posteriores."
+      }
+    ],
+    "resultados_laboratorio": [
+      {
+        "nombre_estudio": "Hemoglobina",
+        "fecha": "14/03/2026",
+        "resultado": 10.8,
+        "unidad": "g/dL",
+        "rango_normal": "12.0 - 15.0 g/dL",
+        "estado": "Bajo"
+      },
+      {
+        "nombre_estudio": "Ferritina serica",
+        "fecha": "14/03/2026",
+        "resultado": 17,
+        "unidad": "ng/mL",
+        "rango_normal": "20 - 200 ng/mL",
+        "estado": "Bajo"
+      }
+    ]
+  },
+  {
+    "id": "usr-004",
+    "curp": "MELA880907HGTXPN09",
+    "nss": "12345678904",
+    "nombre": "Alejandro Mendoza Lopez",
+    "edad": 37,
+    "sexo": "Masculino",
+    "tipo_sangre": "AB-",
+    "alergias": ["Acido acetilsalicilico"],
+    "ultima_consulta": "08/04/2026",
+    "antecedentes": {
+      "padecimientos_cronicos": ["Obesidad grado I"],
+      "cirugias": ["Artroscopia de rodilla (2019)"],
+      "historial_familiar": ["Diabetes tipo 2 (madre)", "Hipertension (abuela paterna)"]
+    },
+    "historial_medico": [
+      {
+        "fecha": "08/04/2026",
+        "medico": "Dr. Omar Velez",
+        "especialidad": "Nutricion Clinica",
+        "diagnostico": "Control de peso y resistencia a la insulina",
+        "notas": "Se sugiere plan nutricional hipocalorico y caminata diaria."
+      },
+      {
+        "fecha": "26/01/2026",
+        "medico": "Dra. Mayra Ponce",
+        "especialidad": "Medicina Familiar",
+        "diagnostico": "Lumbalgia mecanica",
+        "notas": "Ejercicios de fortalecimiento lumbar."
+      }
+    ],
+    "resultados_laboratorio": [
+      {
+        "nombre_estudio": "Trigliceridos",
+        "fecha": "06/04/2026",
+        "resultado": 210,
+        "unidad": "mg/dL",
+        "rango_normal": "< 150 mg/dL",
+        "estado": "Elevado"
+      },
+      {
+        "nombre_estudio": "Glucosa en ayuno",
+        "fecha": "06/04/2026",
+        "resultado": 99,
+        "unidad": "mg/dL",
+        "rango_normal": "70 - 99 mg/dL",
+        "estado": "Normal"
+      }
+    ]
+  }
+]

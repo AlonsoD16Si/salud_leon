@@ -1,0 +1,58 @@
+[
+  {
+    "keywords": ["módulo", "modulo", "módulos", "modulos", "atención", "atencion", "centro de salud", "clínica", "clinica"],
+    "response": "Contamos con varios módulos de atención en León 📍 Puedes consultarlos todos en la sección Módulos de Atención del menú principal. Cada uno incluye dirección, teléfono, horario y mapa de ubicación."
+  },
+  {
+    "keywords": ["vacuna", "vacunas", "vacunación", "vacunacion", "inmunización", "inmunizacion"],
+    "response": "Actualmente hay campañas de vacunación activas en León 💉 Visita la sección Campañas de Salud para ver calendario, lugares de aplicación y edades objetivo."
+  },
+  {
+    "keywords": ["campaña", "campana", "campañas", "campanas", "programa", "programas"],
+    "response": "Tenemos varias campañas de salud activas 📋 Puedes verlas en la sección Campañas de Salud. Incluyen vacunación, detección de diabetes, nutrición y más."
+  },
+  {
+    "keywords": ["diabetes", "diabético", "diabetico", "azúcar", "azucar", "glucosa"],
+    "response": "La diabetes es uno de los padecimientos más importantes a monitorear. Te recomendamos asistir a tu módulo de atención más cercano para una detección gratuita. También puedes consultar nuestras campañas activas de control glucémico 🩺"
+  },
+  {
+    "keywords": ["hipertensión", "hipertension", "presión", "presion", "corazón", "corazon"],
+    "response": "Para revisión de presión arterial puedes acudir a cualquier módulo de atención sin cita previa. Es recomendable medirla al menos una vez al mes si tienes factores de riesgo 💙"
+  },
+  {
+    "keywords": ["covid", "coronavirus", "pandemia"],
+    "response": "Puedes encontrar información actualizada sobre COVID-19 en la sección de Noticias y Campañas. Si presentas síntomas, acude a tu módulo de salud más cercano o llama al número de atención municipal."
+  },
+  {
+    "keywords": ["expediente", "historial", "mis datos", "mi información", "mi informacion", "resultados"],
+    "response": "Para consultar tu expediente clínico digital entra a Iniciar sesión con tu CURP y NSS. Desde tu panel personal podrás ver tu historial médico, antecedentes y resultados de laboratorio 📁"
+  },
+  {
+    "keywords": ["login", "iniciar sesión", "iniciar sesion", "contraseña", "contrasena", "ingresar"],
+    "response": "Para acceder a tu expediente necesitas tu CURP y tu Número de Seguro Social (NSS). Estos datos son los que usas al registrarte en el IMSS o ISSSTE. ¿Tienes alguna duda al ingresar?"
+  },
+  {
+    "keywords": ["cerrar sesión", "cerrar sesion", "salir", "logout", "desconectar"],
+    "response": "Puedes cerrar sesión desde el botón Cerrar sesión en la parte superior de tu panel personal. Tu información estará segura hasta que vuelvas a ingresar 👋"
+  },
+  {
+    "keywords": ["horario", "horarios", "abierto", "hora", "horas"],
+    "response": "Los módulos de atención generalmente atienden de lunes a viernes de 8:00 a 15:00 hrs. Algunos tienen horario extendido. Revisa el detalle de cada módulo para confirmar horarios específicos ⏰"
+  },
+  {
+    "keywords": ["teléfono", "telefono", "número", "numero", "llamar", "contacto"],
+    "response": "Cada módulo de atención tiene su número de contacto en la sección Módulos de Atención. También puedes encontrarlo en la tarjeta de cada módulo con su mapa 📞"
+  },
+  {
+    "keywords": ["emergencia", "urgencia", "urgente", "911", "accidente"],
+    "response": "⚠️ En caso de emergencia llama al 911 de inmediato. Para urgencias médicas no críticas puedes acudir a la sala de urgencias del hospital más cercano. ¿Necesitas que te indique módulos de atención cercanos?"
+  },
+  {
+    "keywords": ["gracias", "muchas gracias", "ok", "listo", "perfecto", "excelente"],
+    "response": "¡Con gusto! 😊 Si tienes más preguntas sobre salud en León, aquí estaré. ¡Cuídate mucho!"
+  },
+  {
+    "keywords": ["hola", "buenas", "buenos días", "buenos dias", "buenas tardes", "buenas noches", "qué tal", "que tal"],
+    "response": "¡Hola! 👋 Bienvenid@ a LeonBot. Puedo ayudarte con información sobre módulos de atención, campañas de salud, tu expediente clínico y más. ¿Qué necesitas saber?"
+  }
+]

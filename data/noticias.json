@@ -1,0 +1,23 @@
+[
+  {
+    "id": "not-001",
+    "titulo": "Arranca jornada integral de salud en zona norte",
+    "categoria": "Comunicado",
+    "fecha": "18/04/2026",
+    "resumen": "Se habilitan brigadas medicas y modulos moviles en colonias prioritarias."
+  },
+  {
+    "id": "not-002",
+    "titulo": "Nuevos horarios en modulos de atencion preventiva",
+    "categoria": "Servicios",
+    "fecha": "15/04/2026",
+    "resumen": "Se extiende atencion vespertina en tres unidades para facilitar acceso laboral."
+  },
+  {
+    "id": "not-003",
+    "titulo": "Capacitacion municipal en primeros auxilios comunitarios",
+    "categoria": "Capacitacion",
+    "fecha": "09/04/2026",
+    "resumen": "Personal comunitario y voluntariado participan en talleres certificados."
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "mod-001",
+    "nombre": "Módulo Centro Histórico",
+    "colonia": "Centro",
+    "zona": "Centro",
+    "direccion": "Av. Miguel Hidalgo 210, Zona Centro, León, Guanajuato",
+    "telefono": "477 123 4567",
+    "horario": "Lunes a Viernes 08:00 - 16:00",
+    "coordenadas_lat": 21.12354,
+    "coordenadas_lng": -101.68238,
+    "google_maps_embed_url": "https://maps.google.com/maps?q=Av.%20Miguel%20Hidalgo%20210%20Zona%20Centro%20Le%C3%B3n%20Guanajuato&output=embed"
+  },
+  {
+    "id": "mod-002",
+    "nombre": "Módulo San Juan Bosco",
+    "colonia": "San Juan Bosco",
+    "zona": "Norte",
+    "direccion": "Blvd. San Juan Bosco 1140, León, Guanajuato",
+    "telefono": "477 235 9876",
+    "horario": "Lunes a Sábado 07:30 - 15:30",
+    "coordenadas_lat": 21.15541,
+    "coordenadas_lng": -101.66691,
+    "google_maps_embed_url": "https://maps.google.com/maps?q=Blvd.%20San%20Juan%20Bosco%201140%20Le%C3%B3n%20Guanajuato&output=embed"
+  },
+  {
+    "id": "mod-003",
+    "nombre": "Módulo Delta",
+    "colonia": "Delta",
+    "zona": "Sur",
+    "direccion": "Blvd. Delta 905, Fracc. Delta, León, Guanajuato",
+    "telefono": "477 312 4501",
+    "horario": "Lunes a Viernes 09:00 - 18:00",
+    "coordenadas_lat": 21.09352,
+    "coordenadas_lng": -101.63917,
+    "google_maps_embed_url": "https://maps.google.com/maps?q=Blvd.%20Delta%20905%20Le%C3%B3n%20Guanajuato&output=embed"
+  },
+  {
+    "id": "mod-004",
+    "nombre": "Módulo Las Joyas",
+    "colonia": "Las Joyas",
+    "zona": "Poniente",
+    "direccion": "Av. Las Joyas 402, León, Guanajuato",
+    "telefono": "477 888 2214",
+    "horario": "Lunes a Viernes 08:00 - 17:00",
+    "coordenadas_lat": 21.14846,
+    "coordenadas_lng": -101.7441,
+    "google_maps_embed_url": "https://maps.google.com/maps?q=Av.%20Las%20Joyas%20402%20Le%C3%B3n%20Guanajuato&output=embed"
+  }
+]

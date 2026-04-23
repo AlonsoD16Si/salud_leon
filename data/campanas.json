@@ -1,0 +1,38 @@
+[
+  {
+    "id": "camp-001",
+    "nombre": "Semana de Vacunacion Infantil",
+    "categoria": "Vacunacion",
+    "descripcion": "Aplicacion de esquema basico para menores de 5 anos en modulos municipales.",
+    "fechaInicio": "08/04/2026",
+    "fechaFin": "30/04/2026",
+    "cobertura": 72
+  },
+  {
+    "id": "camp-002",
+    "nombre": "Prevencion de Diabetes",
+    "categoria": "Prevencion",
+    "descripcion": "Tamizaje y orientacion nutricional para deteccion oportuna de diabetes tipo 2.",
+    "fechaInicio": "01/04/2026",
+    "fechaFin": "15/05/2026",
+    "cobertura": 54
+  },
+  {
+    "id": "camp-003",
+    "nombre": "Leon Respira Sano",
+    "categoria": "Salud Respiratoria",
+    "descripcion": "Jornadas de deteccion de EPOC y asesoria para dejar de fumar.",
+    "fechaInicio": "10/03/2026",
+    "fechaFin": "10/06/2026",
+    "cobertura": 41
+  },
+  {
+    "id": "camp-004",
+    "nombre": "Crecimiento Saludable Escolar",
+    "categoria": "Nutricion",
+    "descripcion": "Valoracion antropometrica y talleres de loncheras saludables en primarias.",
+    "fechaInicio": "20/03/2026",
+    "fechaFin": "25/05/2026",
+    "cobertura": 63
+  }
+]
