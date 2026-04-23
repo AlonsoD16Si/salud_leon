@@ -24,12 +24,13 @@ export default function Home() {
 
   useEffect(() => {
     const loadData = async () => {
-      const [campanasRes, noticiasRes, modulosRes, statsRes] = await Promise.all([
-        fetch("/api/campanas"),
-        fetch("/api/noticias"),
-        fetch("/api/modulos"),
-        fetch("/api/estadisticas"),
-      ]);
+      const [campanasRes, noticiasRes, modulosRes, statsRes] =
+        await Promise.all([
+          fetch("/api/campanas"),
+          fetch("/api/noticias"),
+          fetch("/api/modulos"),
+          fetch("/api/estadisticas"),
+        ]);
 
       const campanasJson = await campanasRes.json();
       const noticiasJson = await noticiasRes.json();
@@ -61,7 +62,7 @@ export default function Home() {
         <div className="blob -right-20 bottom-0 h-72 w-72 bg-blue-300" />
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-28 relative z-10 text-center md:text-left flex flex-col md:flex-row items-center gap-10">
           <div className="flex-1">
-            <motion.span 
+            <motion.span
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white/80 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-emerald-800 shadow-sm"
@@ -72,7 +73,7 @@ export default function Home() {
               </span>
               Salud Pública Municipal - MVP
             </motion.span>
-            
+
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -80,9 +81,10 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="mt-6 text-4xl font-extrabold leading-tight text-slate-900 sm:text-5xl md:text-6xl tracking-tight"
             >
-              Plataforma Ciudadana de <span className="text-emerald-700">Salud para León</span>
+              Plataforma Ciudadana de{" "}
+              <span className="text-emerald-700">Salud para León</span>
             </motion.h1>
-            
+
             <div className="mt-6 text-lg text-slate-600 h-16 md:h-8">
               <Typewriter
                 phrases={[
@@ -92,8 +94,8 @@ export default function Home() {
                 ]}
               />
             </div>
-            
-            <motion.div 
+
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
@@ -112,11 +114,9 @@ export default function Home() {
                 {hasSession ? "Ir a mi expediente" : "Entrar al panel"}
               </Link>
             </motion.div>
-            
-
           </div>
-          
-          <motion.div 
+
+          <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7 }}
@@ -124,7 +124,9 @@ export default function Home() {
           >
             <div className="absolute inset-0 bg-slate-100 rounded-3xl transform rotate-3 scale-105 opacity-70 blur-xl"></div>
             <div className="glass-card rounded-3xl p-6 relative z-10 border border-white/80 shadow-2xl overflow-hidden bg-white/40">
-              <div className="absolute top-0 right-0 p-4 opacity-10"><Activity className="w-32 h-32" /></div>
+              <div className="absolute top-0 right-0 p-4 opacity-10">
+                <Activity className="w-32 h-32" />
+              </div>
               <div className="flex flex-col gap-4 relative z-20">
                 <div className="h-4 w-1/3 bg-slate-200 rounded-full animate-pulse"></div>
                 <div className="h-32 w-full bg-slate-50 rounded-xl border border-slate-100 p-4">
@@ -155,9 +157,18 @@ export default function Home() {
       </section>
 
       <section className="mx-auto grid max-w-6xl grid-cols-1 gap-3 px-4 py-8 sm:grid-cols-3 sm:px-6">
-        <StatCounter value={stats?.totalVacunacion ?? 0} label="Vacunaciones registradas (demo)" />
-        <StatCounter value={stats?.campanasActivas ?? 0} label="Campañas activas" />
-        <StatCounter value={stats?.modulosActivos ?? 0} label="Módulos de atención" />
+        <StatCounter
+          value={stats?.totalVacunacion ?? 0}
+          label="Vacunaciones registradas (demo)"
+        />
+        <StatCounter
+          value={stats?.campanasActivas ?? 0}
+          label="Campañas activas"
+        />
+        <StatCounter
+          value={stats?.modulosActivos ?? 0}
+          label="Módulos de atención"
+        />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 relative">
@@ -167,13 +178,19 @@ export default function Home() {
               <Bell className="w-6 h-6 text-emerald-600" />
               Campañas activas
             </h2>
-            <p className="mt-2 text-slate-600 max-w-2xl">Programas con enfoque preventivo y cobertura local para todas las edades.</p>
+            <p className="mt-2 text-slate-600 max-w-2xl">
+              Programas con enfoque preventivo y cobertura local para todas las
+              edades.
+            </p>
           </div>
-          <Link href="/campanas" className="text-sm font-medium text-emerald-600 hover:text-emerald-700 flex items-center gap-1 transition-colors">
+          <Link
+            href="/campanas"
+            className="text-sm font-medium text-emerald-600 hover:text-emerald-700 flex items-center gap-1 transition-colors"
+          >
             Ver todas <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
-        
+
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {campanas.slice(0, 3).map((campana, index) => (
             <motion.article
@@ -192,9 +209,13 @@ export default function Home() {
                   {campana.fechaInicio} - {campana.fechaFin}
                 </span>
               </div>
-              <h3 className="text-xl font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">{campana.nombre}</h3>
-              <p className="mt-3 text-sm text-slate-600 flex-1 leading-relaxed">{campana.descripcion}</p>
-              
+              <h3 className="text-xl font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
+                {campana.nombre}
+              </h3>
+              <p className="mt-3 text-sm text-slate-600 flex-1 leading-relaxed">
+                {campana.descripcion}
+              </p>
+
               <div className="mt-6 pt-4 border-t border-slate-100">
                 <div className="mb-2 flex justify-between text-xs font-medium text-slate-700">
                   <span>Avance de cobertura</span>
@@ -205,7 +226,7 @@ export default function Home() {
                     initial={{ width: 0 }}
                     whileInView={{ width: `${campana.cobertura}%` }}
                     viewport={{ once: true }}
-                    transition={{ duration: 1, delay: 0.2 + (index * 0.1) }}
+                    transition={{ duration: 1, delay: 0.2 + index * 0.1 }}
                     className="h-full rounded-full bg-emerald-500"
                   />
                 </div>
@@ -221,12 +242,15 @@ export default function Home() {
             <FileText className="w-6 h-6 text-blue-600" />
             Noticias de salud municipal
           </h2>
-          <p className="mt-3 text-slate-600">Mantente informado con las últimas actualizaciones y recomendaciones para tu bienestar.</p>
+          <p className="mt-3 text-slate-600">
+            Mantente informado con las últimas actualizaciones y recomendaciones
+            para tu bienestar.
+          </p>
         </div>
         <div className="grid gap-6 md:grid-cols-3">
           {noticias.slice(0, 3).map((noticia, i) => (
-            <motion.article 
-              key={noticia.id} 
+            <motion.article
+              key={noticia.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -237,10 +261,16 @@ export default function Home() {
                 <span className="rounded-full bg-blue-50 px-3 py-1 font-semibold text-blue-700 border border-blue-100">
                   {noticia.categoria}
                 </span>
-                <span className="text-slate-500 font-medium">{noticia.fecha}</span>
+                <span className="text-slate-500 font-medium">
+                  {noticia.fecha}
+                </span>
               </div>
-              <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2">{noticia.titulo}</h3>
-              <p className="mt-3 text-sm text-slate-600 line-clamp-3 flex-1">{noticia.resumen}</p>
+              <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2">
+                {noticia.titulo}
+              </h3>
+              <p className="mt-3 text-sm text-slate-600 line-clamp-3 flex-1">
+                {noticia.resumen}
+              </p>
               <div className="mt-4 pt-4 border-t border-slate-50 text-blue-600 text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
                 Leer más <ArrowRight className="w-4 h-4" />
               </div>
@@ -256,13 +286,18 @@ export default function Home() {
               <Map className="w-6 h-6 text-teal-600" />
               Módulos de atención
             </h2>
-            <p className="mt-2 text-slate-600 max-w-2xl">Ubica los centros de salud disponibles y sus horarios de atención.</p>
+            <p className="mt-2 text-slate-600 max-w-2xl">
+              Ubica los centros de salud disponibles y sus horarios de atención.
+            </p>
           </div>
-          <Link href="/modulos" className="text-sm font-medium text-teal-600 hover:text-teal-700 flex items-center gap-1 transition-colors">
+          <Link
+            href="/modulos"
+            className="text-sm font-medium text-teal-600 hover:text-teal-700 flex items-center gap-1 transition-colors"
+          >
             Ver mapa interactivo <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
-        
+
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {modulos.slice(0, 4).map((modulo, index) => (
             <motion.article
@@ -274,12 +309,18 @@ export default function Home() {
               className="relative overflow-hidden rounded-2xl border border-teal-100 bg-white p-6 shadow-sm transition-all hover:shadow-md hover:-translate-y-1 group"
             >
               <div className="absolute top-0 right-0 w-20 h-20 bg-teal-50 rounded-bl-full -mr-4 -mt-4 opacity-50 transition-transform group-hover:scale-110"></div>
-              
-              <h3 className="text-lg font-bold text-slate-900 relative z-10">{modulo.nombre}</h3>
-              <p className="mt-2 text-sm text-slate-600 relative z-10">{modulo.direccion}</p>
-              
+
+              <h3 className="text-lg font-bold text-slate-900 relative z-10">
+                {modulo.nombre}
+              </h3>
+              <p className="mt-2 text-sm text-slate-600 relative z-10">
+                {modulo.direccion}
+              </p>
+
               <div className="mt-4 pt-4 border-t border-slate-100/60 relative z-10">
-                <p className="text-xs text-slate-500 mb-1">Contacto y horario</p>
+                <p className="text-xs text-slate-500 mb-1">
+                  Contacto y horario
+                </p>
                 <p className="text-sm font-medium text-slate-700">
                   {modulo.telefono}
                 </p>
@@ -287,7 +328,7 @@ export default function Home() {
                   {modulo.horario}
                 </p>
               </div>
-              
+
               <div className="mt-4 flex relative z-10">
                 <span className="inline-flex items-center gap-1 rounded-full bg-teal-50 px-2.5 py-1 text-xs font-semibold text-teal-700 border border-teal-100/50">
                   Zona {modulo.zona}
@@ -300,11 +341,7 @@ export default function Home() {
 
       <footer className="mt-8 border-t border-slate-200 bg-slate-50/90">
         <div className="mx-auto max-w-6xl px-4 py-6 text-sm text-slate-600 sm:px-6">
-          <p>Salud León - Prototipo MVP demostrativo de tecnología cívica en salud.</p>
-          <p className="mt-1">No representa un sistema clínico oficial ni maneja información personal real.</p>
-          <p className="mt-1 text-xs text-slate-500">
-            Palabras clave: health León, health modules León, health campaigns Mexico.
-          </p>
+          <p>Salud León.</p>
         </div>
       </footer>
     </main>
