@@ -64,3 +64,38 @@ export type UsuarioMock = {
   historial_medico: HistorialMedico[];
   resultados_laboratorio: ResultadoLaboratorio[];
 };
+
+export type EstadoSlot = "Disponible" | "Reservado" | "No disponible";
+
+export type DisponibilidadDia = {
+  fecha: string;
+  disponible: string[];
+  reservado: string[];
+  no_disponible: string[];
+};
+
+export type InstitucionCita = {
+  id: string;
+  nombre: string;
+  tipo: "Publica" | "Privada";
+  servicios: string[];
+  nota: string;
+  descripcion: string;
+  logo: string;
+};
+
+export type ConfiguracionCitas = {
+  instituciones: InstitucionCita[];
+  servicios: string[];
+  disponibilidad: DisponibilidadDia[];
+  historial_demo: {
+    id: string;
+    fecha: string;
+    hora: string;
+    institucion: string;
+    area: string;
+    doctor: string;
+    notas: string;
+    estado: "Completada" | "Programada";
+  }[];
+};

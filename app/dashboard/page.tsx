@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import type { UsuarioMock } from "@/types/health";
+import type { ConfiguracionCitas, DisponibilidadDia, UsuarioMock } from "@/types/health";
 import { getAvatarColor, getInitials } from "@/lib/avatar";
 import { getActiveSession, LOGOUT_NOTICE_KEY, SESSION_KEY } from "@/lib/session";
 import { 
@@ -18,17 +18,44 @@ import {
   HeartPulse,
   AlertCircle,
   Syringe,
-  ChevronRight
+  ChevronRight,
+  CalendarDays,
+  Clock3,
+  Building2,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight as ChevronRightSmall
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const sections = [
   { id: "resumen", label: "Resumen", icon: LayoutDashboard },
+  { id: "citas", label: "Citas", icon: CalendarDays },
   { id: "historial", label: "Historial", icon: History },
   { id: "laboratorios", label: "Laboratorios", icon: Activity },
   { id: "antecedentes", label: "Antecedentes", icon: FileText },
 ];
+
+type EstadoDisponibilidad = Record<
+  string,
+  {
+    disponible: string[];
+    reservado: string[];
+    no_disponible: string[];
+  }
+>;
+
+type CitaProgramada = {
+  id: string;
+  fecha: string;
+  hora: string;
+  institucion: string;
+  area: string;
+  doctor: string;
+  notas: string;
+  estado: "Completada" | "Programada";
+};
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -36,12 +63,57 @@ export default function DashboardPage() {
   const [patient] = useState<UsuarioMock | null>(() => getActiveSession());
   const [confirmLogout, setConfirmLogout] = useState(false);
   const [logoutAnimating, setLogoutAnimating] = useState(false);
+  const [configCitas, setConfigCitas] = useState<ConfiguracionCitas | null>(null);
+  const [estadoDisponibilidad, setEstadoDisponibilidad] = useState<EstadoDisponibilidad>({});
+  const [historialCitas, setHistorialCitas] = useState<CitaProgramada[]>([]);
+  const [institucionCita, setInstitucionCita] = useState("");
+  const [servicioCita, setServicioCita] = useState("");
+  const [fechaSeleccionada, setFechaSeleccionada] = useState("");
+  const [slotSeleccionado, setSlotSeleccionado] = useState("");
+  const [notasCita, setNotasCita] = useState("");
+  const [mensajeCita, setMensajeCita] = useState("");
+  const [mesVisible, setMesVisible] = useState(() => {
+    const hoy = new Date();
+    return new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+  });
 
   useEffect(() => {
     if (!patient) {
       router.replace("/login");
     }
   }, [patient, router]);
+
+  useEffect(() => {
+    const loadCitas = async () => {
+      const response = await fetch("/api/citas-config");
+      const json = await response.json();
+      const config = json.data as ConfiguracionCitas;
+      setConfigCitas(config);
+      setEstadoDisponibilidad(mapearDisponibilidad(config.disponibilidad));
+      setInstitucionCita(config.instituciones[0]?.id ?? "");
+      setServicioCita(config.servicios[0] ?? "");
+      setFechaSeleccionada(config.disponibilidad[0]?.fecha ?? "");
+
+      if (!patient) return;
+      const key = `salud_leon_citas_${patient.id}`;
+      const citasGuardadas = window.localStorage.getItem(key);
+      if (citasGuardadas) {
+        setHistorialCitas(JSON.parse(citasGuardadas) as CitaProgramada[]);
+        return;
+      }
+      setHistorialCitas(config.historial_demo as CitaProgramada[]);
+    };
+
+    void loadCitas();
+  }, [patient]);
+
+  useEffect(() => {
+    if (!patient || historialCitas.length === 0) return;
+    window.localStorage.setItem(
+      `salud_leon_citas_${patient.id}`,
+      JSON.stringify(historialCitas),
+    );
+  }, [historialCitas, patient]);
 
   const greeting = useMemo(() => {
     const hour = new Date().getHours();
@@ -57,6 +129,68 @@ export default function DashboardPage() {
     }),
     [patient?.curp],
   );
+
+  const institucionActiva = useMemo(
+    () =>
+      configCitas?.instituciones.find((item) => item.id === institucionCita) ?? null,
+    [configCitas?.instituciones, institucionCita],
+  );
+
+  const serviciosInstitucion = institucionActiva?.servicios ?? configCitas?.servicios ?? [];
+
+  const disponibilidadDiaSeleccionado = fechaSeleccionada
+    ? estadoDisponibilidad[fechaSeleccionada]
+    : undefined;
+
+  const celdasCalendario = useMemo(() => crearCeldasCalendario(mesVisible), [mesVisible]);
+
+  const etiquetaMes = useMemo(
+    () =>
+      mesVisible.toLocaleDateString("es-MX", {
+        month: "long",
+        year: "numeric",
+      }),
+    [mesVisible],
+  );
+
+  const crearCita = () => {
+    if (!institucionActiva || !servicioCita || !fechaSeleccionada || !slotSeleccionado) {
+      return;
+    }
+
+    const disponibilidad = estadoDisponibilidad[fechaSeleccionada];
+    if (!disponibilidad?.disponible.includes(slotSeleccionado)) {
+      setMensajeCita("El horario ya no esta disponible. Selecciona otro horario.");
+      return;
+    }
+
+    const nuevaCita: CitaProgramada = {
+      id: `apt-${Date.now()}`,
+      fecha: fechaSeleccionada,
+      hora: slotSeleccionado,
+      institucion: institucionActiva.nombre,
+      area: servicioCita,
+      doctor: "Asignacion automatica (demo)",
+      notas: notasCita.trim() || "Sin notas adicionales.",
+      estado: "Programada",
+    };
+
+    setHistorialCitas((previo) => [nuevaCita, ...previo]);
+    setEstadoDisponibilidad((previo) => ({
+      ...previo,
+      [fechaSeleccionada]: {
+        ...previo[fechaSeleccionada],
+        disponible: previo[fechaSeleccionada].disponible.filter(
+          (slot) => slot !== slotSeleccionado,
+        ),
+        reservado: [...previo[fechaSeleccionada].reservado, slotSeleccionado],
+      },
+    }));
+    setMensajeCita("Cita confirmada en entorno simulado.");
+    setNotasCita("");
+    setSlotSeleccionado("");
+    setActiveSection("citas");
+  };
 
   const handleLogout = () => {
     setConfirmLogout(false);
@@ -93,7 +227,7 @@ export default function DashboardPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] bg-white/80 backdrop-blur-md flex items-center justify-center"
+            className="fixed inset-0 z-60 bg-white/80 backdrop-blur-md flex items-center justify-center"
           >
             <div className="flex flex-col items-center gap-4">
               <div className="h-10 w-10 animate-spin rounded-full border-4 border-emerald-100 border-t-emerald-600"></div>
@@ -285,6 +419,282 @@ export default function DashboardPage() {
                 </>
               )}
 
+              {activeSection === "citas" && (
+                <div className="space-y-6">
+                  <article className="surface-card p-6 border-l-4 border-l-emerald-500">
+                    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                      <div>
+                        <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                          <CalendarDays className="h-5 w-5 text-emerald-600" />
+                          Appointment Dashboard (Simulado)
+                        </h2>
+                        <p className="mt-1 text-sm text-slate-600">
+                          Agenda una cita en 3 pasos: institucion, fecha y horario.
+                        </p>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-700">
+                          <User className="h-3 w-3" /> CURP {patient.curp}
+                        </span>
+                        <span className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
+                          NSS {patient.nss}
+                        </span>
+                      </div>
+                    </div>
+                  </article>
+
+                  <div className="grid gap-6 xl:grid-cols-[1.35fr_1fr]">
+                    <article className="surface-card p-6">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <div>
+                          <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                            Institucion
+                          </label>
+                          <select
+                            value={institucionCita}
+                            onChange={(event) => {
+                              const id = event.target.value;
+                              const institucion = configCitas?.instituciones.find(
+                                (item) => item.id === id,
+                              );
+                              setInstitucionCita(id);
+                              setServicioCita(institucion?.servicios[0] ?? "");
+                              setMensajeCita("");
+                            }}
+                            className="input-modern"
+                          >
+                            {(configCitas?.instituciones ?? []).map((institucion) => (
+                              <option key={institucion.id} value={institucion.id}>
+                                {institucion.nombre}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                            Servicio
+                          </label>
+                          <select
+                            value={servicioCita}
+                            onChange={(event) => {
+                              setServicioCita(event.target.value);
+                              setMensajeCita("");
+                            }}
+                            className="input-modern"
+                          >
+                            {serviciosInstitucion.map((servicio) => (
+                              <option key={servicio} value={servicio}>
+                                {servicio}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                        <div className="mb-4 flex items-center justify-between">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setMesVisible(
+                                (previo) =>
+                                  new Date(previo.getFullYear(), previo.getMonth() - 1, 1),
+                              )
+                            }
+                            className="rounded-lg border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-100"
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </button>
+                          <p className="text-sm font-semibold capitalize text-slate-800">
+                            {etiquetaMes}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setMesVisible(
+                                (previo) =>
+                                  new Date(previo.getFullYear(), previo.getMonth() + 1, 1),
+                              )
+                            }
+                            className="rounded-lg border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-100"
+                          >
+                            <ChevronRightSmall className="h-4 w-4" />
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-7 gap-2 text-center text-xs font-semibold text-slate-500">
+                          {["L", "M", "M", "J", "V", "S", "D"].map((dia, idx) => (
+                            <span key={`${dia}-${idx}`}>{dia}</span>
+                          ))}
+                        </div>
+
+                        <div className="mt-2 grid grid-cols-7 gap-2">
+                          {celdasCalendario.map((celda, index) => {
+                            if (!celda) {
+                              return (
+                                <span
+                                  key={`empty-${index}`}
+                                  className="h-11 rounded-lg bg-transparent"
+                                />
+                              );
+                            }
+                            const disponibilidad = estadoDisponibilidad[celda.iso];
+                            const disponibles = disponibilidad?.disponible.length ?? 0;
+                            const isSelected = fechaSeleccionada === celda.iso;
+                            return (
+                              <button
+                                key={celda.iso}
+                                type="button"
+                                onClick={() => {
+                                  setFechaSeleccionada(celda.iso);
+                                  setSlotSeleccionado("");
+                                  setMensajeCita("");
+                                }}
+                                className={cn(
+                                  "h-11 rounded-xl border text-sm font-semibold transition",
+                                  isSelected
+                                    ? "border-blue-500 bg-blue-50 text-blue-700"
+                                    : "border-slate-200 bg-white text-slate-700 hover:border-slate-300",
+                                  disponibles === 0 && "opacity-70",
+                                )}
+                              >
+                                <span>{celda.dia}</span>
+                                <span className="block text-[10px] font-medium text-slate-500">
+                                  {disponibles > 0 ? `${disponibles} disp.` : "No disp."}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </article>
+
+                    <article className="surface-card p-6">
+                      <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <Clock3 className="h-4 w-4 text-blue-600" />
+                        Horarios para {fechaSeleccionada || "selecciona una fecha"}
+                      </h3>
+
+                      <div className="mt-4 grid grid-cols-2 gap-2">
+                        {(disponibilidadDiaSeleccionado?.disponible ?? []).map((slot) => (
+                          <button
+                            key={slot}
+                            type="button"
+                            onClick={() => {
+                              setSlotSeleccionado(slot);
+                              setMensajeCita("");
+                            }}
+                            className={cn(
+                              "rounded-xl border px-3 py-2 text-sm font-medium transition",
+                              slotSeleccionado === slot
+                                ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                                : "border-emerald-200 bg-white text-emerald-700 hover:border-emerald-300",
+                            )}
+                          >
+                            {slot}
+                          </button>
+                        ))}
+
+                        {(disponibilidadDiaSeleccionado?.reservado ?? []).map((slot) => (
+                          <span
+                            key={slot}
+                            className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-center text-sm font-medium text-amber-700"
+                          >
+                            {slot} reservado
+                          </span>
+                        ))}
+
+                        {(disponibilidadDiaSeleccionado?.no_disponible ?? []).map((slot) => (
+                          <span
+                            key={slot}
+                            className="rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-center text-sm font-medium text-slate-500"
+                          >
+                            {slot} bloqueado
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="mt-5">
+                        <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                          Notas opcionales
+                        </label>
+                        <textarea
+                          value={notasCita}
+                          onChange={(event) => setNotasCita(event.target.value)}
+                          className="input-modern min-h-[82px] resize-none"
+                          placeholder="Ej. Llevar estudios previos"
+                        />
+                      </div>
+
+                      {mensajeCita ? (
+                        <p className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700">
+                          {mensajeCita}
+                        </p>
+                      ) : null}
+
+                      <button
+                        type="button"
+                        onClick={crearCita}
+                        disabled={!fechaSeleccionada || !slotSeleccionado || !servicioCita}
+                        className="mt-5 w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        Confirmar cita simulada
+                      </button>
+
+                      <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
+                        <p className="font-semibold">Leyenda</p>
+                        <p className="mt-1">Verde: disponible | Amarillo: reservado | Gris: no disponible</p>
+                      </div>
+                    </article>
+                  </div>
+
+                  <article className="surface-card p-6">
+                    <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                      <Building2 className="h-4 w-4 text-indigo-600" />
+                      Historial de citas
+                    </h3>
+                    <div className="mt-4 space-y-3">
+                      {historialCitas.length === 0 ? (
+                        <p className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-sm text-slate-500">
+                          No hay citas registradas aun.
+                        </p>
+                      ) : (
+                        historialCitas.map((cita) => (
+                          <div
+                            key={cita.id}
+                            className="rounded-2xl border border-slate-200 bg-white p-4"
+                          >
+                            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                              <div>
+                                <p className="text-sm font-semibold text-slate-900">
+                                  {cita.institucion} - {cita.area}
+                                </p>
+                                <p className="text-xs text-slate-500">
+                                  {cita.fecha} a las {cita.hora} | {cita.doctor}
+                                </p>
+                              </div>
+                              <span
+                                className={cn(
+                                  "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium",
+                                  cita.estado === "Programada"
+                                    ? "bg-blue-50 text-blue-700 border border-blue-200"
+                                    : "bg-emerald-50 text-emerald-700 border border-emerald-200",
+                                )}
+                              >
+                                <CheckCircle2 className="h-3.5 w-3.5" />
+                                {cita.estado}
+                              </span>
+                            </div>
+                            <p className="mt-2 text-sm text-slate-600">{cita.notas}</p>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </article>
+                </div>
+              )}
+
               {activeSection === "antecedentes" && (
                 <div className="space-y-6">
                   <article className="surface-card p-6">
@@ -370,7 +780,7 @@ export default function DashboardPage() {
                         key={`${record.fecha}-${record.medico}`}
                         className="relative rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-shadow group"
                       >
-                        <div className="absolute -left-[27px] top-5 h-4 w-4 rounded-full bg-white border-4 border-blue-500 group-hover:scale-125 transition-transform" />
+                        <div className="absolute left-[-27px] top-5 h-4 w-4 rounded-full bg-white border-4 border-blue-500 group-hover:scale-125 transition-transform" />
                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-3">
                           <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-slate-100 text-slate-700">
                             <Calendar className="w-3 h-3 mr-1.5" /> {record.fecha}
@@ -483,6 +893,40 @@ export default function DashboardPage() {
       </AnimatePresence>
     </div>
   );
+}
+
+function mapearDisponibilidad(disponibilidad: DisponibilidadDia[]): EstadoDisponibilidad {
+  return disponibilidad.reduce<EstadoDisponibilidad>((acc, item) => {
+    acc[item.fecha] = {
+      disponible: [...item.disponible],
+      reservado: [...item.reservado],
+      no_disponible: [...item.no_disponible],
+    };
+    return acc;
+  }, {});
+}
+
+function crearCeldasCalendario(mes: Date): Array<{ iso: string; dia: number } | null> {
+  const anio = mes.getFullYear();
+  const numeroMes = mes.getMonth();
+  const primerDiaMes = new Date(anio, numeroMes, 1);
+  const totalDias = new Date(anio, numeroMes + 1, 0).getDate();
+  const offset = (primerDiaMes.getDay() + 6) % 7;
+
+  const celdas: Array<{ iso: string; dia: number } | null> = [];
+  for (let i = 0; i < offset; i += 1) celdas.push(null);
+
+  for (let dia = 1; dia <= totalDias; dia += 1) {
+    const fecha = new Date(anio, numeroMes, dia);
+    const mesTexto = String(fecha.getMonth() + 1).padStart(2, "0");
+    const diaTexto = String(fecha.getDate()).padStart(2, "0");
+    celdas.push({
+      iso: `${fecha.getFullYear()}-${mesTexto}-${diaTexto}`,
+      dia,
+    });
+  }
+
+  return celdas;
 }
 
 function getLabStatus(status: "Normal" | "Elevado" | "Bajo") {

@@ -1,0 +1,96 @@
+{
+  "instituciones": [
+    {
+      "id": "imss",
+      "nombre": "IMSS",
+      "tipo": "Publica",
+      "servicios": ["Medicina General", "Especialidades (referencia)", "Laboratorio"],
+      "nota": "La cita real se gestiona en la plataforma oficial IMSS.",
+      "descripcion": "Cobertura amplia para primer nivel y seguimiento.",
+      "logo": "🏥"
+    },
+    {
+      "id": "issste",
+      "nombre": "ISSSTE",
+      "tipo": "Publica",
+      "servicios": ["Medicina General", "Psicologia", "Nutricion"],
+      "nota": "Simulacion informativa de disponibilidad local.",
+      "descripcion": "Atencion integral para derechohabientes.",
+      "logo": "🩺"
+    },
+    {
+      "id": "caises",
+      "nombre": "CAISES",
+      "tipo": "Publica",
+      "servicios": ["Vacunacion", "Control preventivo", "Medicina General"],
+      "nota": "Referencia a red estatal de salud en Guanajuato.",
+      "descripcion": "Servicios comunitarios y preventivos.",
+      "logo": "💉"
+    },
+    {
+      "id": "privado",
+      "nombre": "Clinica Privada",
+      "tipo": "Privada",
+      "servicios": ["Medicina General", "Especialidad", "Laboratorio", "Imagenologia"],
+      "nota": "Comparativo de tiempos de atencion y servicios.",
+      "descripcion": "Opciones con atencion por agenda privada.",
+      "logo": "🏨"
+    }
+  ],
+  "servicios": [
+    "Medicina General",
+    "Especialidad",
+    "Laboratorio",
+    "Nutricion",
+    "Psicologia",
+    "Vacunacion"
+  ],
+  "disponibilidad": [
+    {
+      "fecha": "2026-04-25",
+      "disponible": ["09:00", "10:00", "12:00", "16:00"],
+      "reservado": ["11:00"],
+      "no_disponible": ["08:00", "13:00", "14:00", "15:00"]
+    },
+    {
+      "fecha": "2026-04-26",
+      "disponible": ["11:00", "13:00", "17:00"],
+      "reservado": ["12:00", "16:00"],
+      "no_disponible": ["09:00", "10:00", "14:00", "15:00"]
+    },
+    {
+      "fecha": "2026-04-27",
+      "disponible": ["08:30", "09:30", "10:30", "18:00"],
+      "reservado": ["12:30"],
+      "no_disponible": ["11:30", "13:30", "14:30", "15:30"]
+    },
+    {
+      "fecha": "2026-04-28",
+      "disponible": ["09:00", "13:00", "15:00"],
+      "reservado": ["10:00", "11:00"],
+      "no_disponible": ["08:00", "12:00", "14:00", "16:00"]
+    }
+  ],
+  "historial_demo": [
+    {
+      "id": "apt-001",
+      "fecha": "2026-03-12",
+      "hora": "10:00",
+      "institucion": "IMSS",
+      "area": "Medicina General",
+      "doctor": "Dra. Laura Medina",
+      "notas": "Control de sintomas respiratorios.",
+      "estado": "Completada"
+    },
+    {
+      "id": "apt-002",
+      "fecha": "2026-02-04",
+      "hora": "09:30",
+      "institucion": "CAISES",
+      "area": "Vacunacion",
+      "doctor": "Enf. Karla Rios",
+      "notas": "Refuerzo estacional aplicado.",
+      "estado": "Completada"
+    }
+  ]
+}

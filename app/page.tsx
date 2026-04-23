@@ -2,12 +2,28 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { getActiveSession } from "@/lib/session";
 import { StatCounter } from "@/components/stat-counter";
 import { Typewriter } from "@/components/typewriter";
-import { ArrowRight, Map, Activity, Bell, FileText } from "lucide-react";
-import type { Campana, ModuloAtencion, Noticia } from "@/types/health";
+import {
+  ArrowRight,
+  Map,
+  Activity,
+  Bell,
+  FileText,
+  Hospital,
+  CalendarCheck2,
+  UserRound,
+  ShieldCheck,
+} from "lucide-react";
+import type {
+  Campana,
+  ConfiguracionCitas,
+  ModuloAtencion,
+  Noticia,
+} from "@/types/health";
 
 type Estadisticas = {
   totalVacunacion: number;
@@ -15,32 +31,54 @@ type Estadisticas = {
   modulosActivos: number;
 };
 
+type FormularioCitaPublica = {
+  nombre: string;
+  contacto: string;
+  motivo: string;
+};
+
 export default function Home() {
+  const router = useRouter();
   const [campanas, setCampanas] = useState<Campana[]>([]);
   const [noticias, setNoticias] = useState<Noticia[]>([]);
   const [modulos, setModulos] = useState<ModuloAtencion[]>([]);
   const [stats, setStats] = useState<Estadisticas | null>(null);
   const [hasSession, setHasSession] = useState(false);
+  const [citasConfig, setCitasConfig] = useState<ConfiguracionCitas | null>(
+    null,
+  );
+  const [institucionSeleccionada, setInstitucionSeleccionada] =
+    useState<string>("");
+  const [servicioSeleccionado, setServicioSeleccionado] = useState<string>("");
+  const [formularioCita, setFormularioCita] = useState<FormularioCitaPublica>({
+    nombre: "",
+    contacto: "",
+    motivo: "",
+  });
+  const [mensajeCita, setMensajeCita] = useState("");
 
   useEffect(() => {
     const loadData = async () => {
-      const [campanasRes, noticiasRes, modulosRes, statsRes] =
+      const [campanasRes, noticiasRes, modulosRes, statsRes, citasConfigRes] =
         await Promise.all([
           fetch("/api/campanas"),
           fetch("/api/noticias"),
           fetch("/api/modulos"),
           fetch("/api/estadisticas"),
+          fetch("/api/citas-config"),
         ]);
 
       const campanasJson = await campanasRes.json();
       const noticiasJson = await noticiasRes.json();
       const modulosJson = await modulosRes.json();
       const statsJson = await statsRes.json();
+      const citasConfigJson = await citasConfigRes.json();
 
       setCampanas(campanasJson.data);
       setNoticias(noticiasJson.data);
       setModulos(modulosJson.data);
       setStats(statsJson.data);
+      setCitasConfig(citasConfigJson.data);
     };
 
     void loadData();
@@ -54,6 +92,44 @@ export default function Home() {
       window.removeEventListener("storage", syncSession);
     };
   }, []);
+
+  const instituciones = citasConfig?.instituciones ?? [];
+  const institucionActiva =
+    instituciones.find(
+      (institucion) => institucion.id === institucionSeleccionada,
+    ) ?? null;
+  const serviciosDisponibles = institucionActiva?.servicios ?? [];
+
+  const actualizarCampoFormulario = (
+    campo: keyof FormularioCitaPublica,
+    valor: string,
+  ) => {
+    setFormularioCita((estadoPrevio) => ({ ...estadoPrevio, [campo]: valor }));
+  };
+
+  const handleCitaPublica = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!institucionSeleccionada || !servicioSeleccionado) return;
+    if (!formularioCita.nombre.trim() || !formularioCita.contacto.trim())
+      return;
+
+    const preRegistro = {
+      institucion: institucionSeleccionada,
+      servicio: servicioSeleccionado,
+      ...formularioCita,
+      createdAt: new Date().toISOString(),
+    };
+    window.localStorage.setItem(
+      "salud_leon_pre_cita",
+      JSON.stringify(preRegistro),
+    );
+    setMensajeCita(
+      hasSession
+        ? "Listo. Tu solicitud fue guardada y puedes continuar al dashboard de citas."
+        : "Solicitud guardada. Continua con acceso o registro para elegir fecha y horario.",
+    );
+    router.push(hasSession ? "/dashboard" : "/login");
+  };
 
   return (
     <main className="relative flex-1 bg-slate-50">
@@ -153,6 +229,205 @@ export default function Home() {
               </div>
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+        <div className="mb-8 flex flex-col gap-3 text-center md:text-left">
+          <motion.span
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mx-auto md:mx-0 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-blue-800"
+          >
+            <CalendarCheck2 className="h-3.5 w-3.5" />
+            Agenda de Citas Simulada
+          </motion.span>
+          <h2 className="text-3xl font-bold text-slate-900">
+            Agenda tu cita en menos de 4 pasos
+          </h2>
+          <p className="text-slate-600">
+            Selecciona institucion, servicio y contacto basico. Nunca pedimos
+            CURP, NSS ni historial medico en esta etapa publica.
+          </p>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-2">
+          <article className="surface-card p-6">
+            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <Hospital className="h-5 w-5 text-emerald-600" />
+              Instituciones disponibles
+            </h3>
+            <p className="mt-2 text-sm text-slate-600">
+              Referencias informativas para ayudarte a decidir donde agendar.
+            </p>
+
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              {instituciones.map((institucion) => (
+                <button
+                  key={institucion.id}
+                  type="button"
+                  onClick={() => {
+                    setInstitucionSeleccionada(institucion.id);
+                    setServicioSeleccionado("");
+                    setMensajeCita("");
+                  }}
+                  className={`rounded-2xl border p-4 text-left transition-all ${
+                    institucionSeleccionada === institucion.id
+                      ? "border-emerald-400 bg-emerald-50 shadow-sm"
+                      : "border-slate-200 bg-white hover:border-slate-300"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xl" aria-hidden="true">
+                      {institucion.logo}
+                    </span>
+                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-700">
+                      {institucion.tipo}
+                    </span>
+                  </div>
+                  <p className="mt-3 font-semibold text-slate-900">
+                    {institucion.nombre}
+                  </p>
+                  <p className="mt-1 text-xs text-slate-600">
+                    {institucion.descripcion}
+                  </p>
+                  <p className="mt-2 text-xs font-medium text-emerald-700">
+                    {institucion.nota}
+                  </p>
+                </button>
+              ))}
+            </div>
+          </article>
+
+          <motion.article
+            layout
+            className="surface-card p-6"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <UserRound className="h-5 w-5 text-blue-600" />
+              Entrada rapida a cita
+            </h3>
+            <p className="mt-2 text-sm text-slate-600">
+              Primero eliges institucion y servicio; despues solo pedimos nombre
+              y un medio de contacto.
+            </p>
+
+            <form className="mt-5 space-y-4" onSubmit={handleCitaPublica}>
+              <div>
+                <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                  1) Servicio
+                </label>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {serviciosDisponibles.length > 0 ? (
+                    serviciosDisponibles.map((servicio) => (
+                      <button
+                        key={servicio}
+                        type="button"
+                        onClick={() => {
+                          setServicioSeleccionado(servicio);
+                          setMensajeCita("");
+                        }}
+                        className={`rounded-xl border px-3 py-2 text-sm font-medium transition ${
+                          servicioSeleccionado === servicio
+                            ? "border-blue-500 bg-blue-50 text-blue-700"
+                            : "border-slate-200 text-slate-600 hover:border-slate-300"
+                        }`}
+                      >
+                        {servicio}
+                      </button>
+                    ))
+                  ) : (
+                    <p className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-500 sm:col-span-2">
+                      Selecciona una institucion para mostrar sus servicios.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {servicioSeleccionado ? (
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="sm:col-span-2">
+                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                      2) Nombre completo
+                    </label>
+                    <input
+                      aria-label="Nombre completo"
+                      value={formularioCita.nombre}
+                      onChange={(event) =>
+                        actualizarCampoFormulario("nombre", event.target.value)
+                      }
+                      className="input-modern"
+                      placeholder="Ej. Maria Lopez"
+                      required
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                      3) Email o telefono
+                    </label>
+                    <input
+                      aria-label="Email o telefono"
+                      value={formularioCita.contacto}
+                      onChange={(event) =>
+                        actualizarCampoFormulario(
+                          "contacto",
+                          event.target.value,
+                        )
+                      }
+                      className="input-modern"
+                      placeholder="correo@ejemplo.com o 4771234567"
+                      required
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                      Motivo (opcional)
+                    </label>
+                    <textarea
+                      aria-label="Motivo de consulta"
+                      value={formularioCita.motivo}
+                      onChange={(event) =>
+                        actualizarCampoFormulario("motivo", event.target.value)
+                      }
+                      className="input-modern min-h-[84px] resize-none"
+                      placeholder="Ej. Revision general o seguimiento nutricional"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <p className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-500">
+                  Elige un servicio para continuar con el formulario rapido.
+                </p>
+              )}
+
+              {mensajeCita ? (
+                <p className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-800">
+                  {mensajeCita}
+                </p>
+              ) : null}
+
+              <button
+                type="submit"
+                disabled={!institucionSeleccionada || !servicioSeleccionado}
+                className="btn-primary w-full py-3 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {hasSession
+                  ? "Continuar al dashboard de citas"
+                  : "Continuar / Crear cuenta"}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </button>
+            </form>
+
+            <div className="mt-4 flex items-start gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+              <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500" />
+              Tus datos se usan solo para simulacion local del MVP (sin
+              backend).
+            </div>
+          </motion.article>
         </div>
       </section>
 
